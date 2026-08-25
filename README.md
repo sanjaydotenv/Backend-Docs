@@ -20,3 +20,9 @@
 ✅ CRUD
 ✅ For Backend Understanding
 ```
+
+# 👩🏻‍💼 Day-04
+
+```
+✅ Explore Models Schema's
+```
