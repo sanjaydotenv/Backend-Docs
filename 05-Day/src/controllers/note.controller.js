@@ -19,7 +19,7 @@ const createNoteController = async (req, res) => {
 
 const getSingleNoteController = async (req, res) => {
   const { noteID } = req.params;
-  console.log(noteID);
+  console.log("running single note")
   try {
     const singleNote = await notesModel.findById(noteID);
 
@@ -32,4 +32,22 @@ const getSingleNoteController = async (req, res) => {
   }
 };
 
-module.exports = { createNoteController, getSingleNoteController };
+const getAllNotesController = async (req, res) => {
+  console.log("running all note")
+  try {
+    const allNotes = await notesModel.find()
+
+    res.status(200).json({
+      message: "Fetched All Notes Successfully",
+      allNotes: allNotes,
+    });
+  } catch (error) {
+    console.log(`Error while Fetching all notes ${error}`);
+  }
+};
+
+module.exports = {
+  createNoteController,
+  getSingleNoteController,
+  getAllNotesController,
+};
