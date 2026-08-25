@@ -17,9 +17,23 @@ const createNoteController = async (req, res) => {
   }
 };
 
+const getAllNotesController = async (req, res) => {
+  console.log("running all note");
+  try {
+    const allNotes = await notesModel.find();
+
+    res.status(200).json({
+      message: "Fetched All Notes Successfully",
+      allNotes: allNotes,
+    });
+  } catch (error) {
+    console.log(`Error while Fetching all notes ${error}`);
+  }
+};
+
 const getSingleNoteController = async (req, res) => {
   const { noteID } = req.params;
-  console.log("running single note")
+  console.log("running single note");
   try {
     const singleNote = await notesModel.findById(noteID);
 
@@ -32,22 +46,43 @@ const getSingleNoteController = async (req, res) => {
   }
 };
 
-const getAllNotesController = async (req, res) => {
-  console.log("running all note")
-  try {
-    const allNotes = await notesModel.find()
+const updateNoteController = async (req, res) => {
+  const { noteID } = req.params;
+  const data = req.body;
 
-    res.status(200).json({
-      message: "Fetched All Notes Successfully",
-      allNotes: allNotes,
+  try {
+    const updatedNote = await notesModel.findByIdAndUpdate(noteID, data, {
+      new: true,
+    });
+
+    res.status(201).json({
+      message: "Note Updated Successfully",
+      updatedNote: updatedNote,
     });
   } catch (error) {
-    console.log(`Error while Fetching all notes ${error}`);
+    console.log(`Error while updating note ${error}`);
+  }
+};
+
+const deleteNoteController = async (req, res) => {
+  const { noteID } = req.params;
+
+  try {
+    const deletedNote = await notesModel.findByIdAndDelete(noteID);
+
+    res.status(200).json({
+      message: "Note Deleted Successfully",
+      deletedNote: deletedNote,
+    });
+  } catch (error) {
+    console.log(`Error while Deleting a Note ${error}`)
   }
 };
 
 module.exports = {
   createNoteController,
-  getSingleNoteController,
   getAllNotesController,
+  getSingleNoteController,
+  updateNoteController,
+  deleteNoteController
 };
