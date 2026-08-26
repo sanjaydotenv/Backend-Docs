@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { axiosInsatnce } from "./AxiosInstance";
 import { MyContext } from "./ContextApi";
 
 const CreateNoteForm = () => {
-  const [formData, setFormData] = useState({});
-  const { setAllData } = useContext(MyContext);
+  const { setAllData, isUpdate, setFormData, setIsLoading, formData } =
+    useContext(MyContext);
+
 
   const handleFormData = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -12,11 +13,32 @@ const CreateNoteForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await axiosInsatnce.post("/create", formData);
-    setAllData((prev) => [...prev, res.data.Note]);
-  };
+    setIsLoading(true);
 
-  
+    if (isUpdate) {
+      const res = await axiosInsatnce.put(`/${formData._id}`, formData);
+      const updatedNote = res.data.updatedNote;
+
+      setAllData((prev) =>
+        prev.map((note) => {
+          return note._id === updatedNote._id ? updatedNote : note;
+        }),
+      );
+      setIsLoading(false);
+      setFormData({
+        title: "",
+        description: "",
+      });
+    } else {
+      const res = await axiosInsatnce.post("/create", formData);
+      setAllData((prev) => [...prev, res.data.Note]);
+      setIsLoading(false)
+      setFormData({
+        title: "",
+        description: "",
+      });
+    }
+  };
 
   return (
     <form
@@ -29,6 +51,7 @@ const CreateNoteForm = () => {
         </label>
 
         <input
+          value={formData?.title}
           onInput={handleFormData}
           type="text"
           id="title"
@@ -44,6 +67,7 @@ const CreateNoteForm = () => {
         </label>
 
         <textarea
+          value={formData?.description}
           onInput={handleFormData}
           id="description"
           name="description"

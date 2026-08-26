@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import CreateNoteForm from "./components/CreateNoteForm";
 import Notes from "./components/Notes";
 import { axiosInsatnce } from "./components/AxiosInstance";
@@ -13,8 +13,7 @@ const App = () => {
   };
 
   const deleteNote = async (id) => {
-    const res = await axiosInsatnce.delete(`/${id}`);
-    console.log(res);
+    await axiosInsatnce.delete(`/${id}`);
     allNotes();
   };
 

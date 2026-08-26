@@ -26,3 +26,9 @@
 ```
 ✅ Explore Models Schema's
 ```
+
+# 👩🏻‍💼 Day-05
+
+```
+✅ Create Notes Application Add CRUD functionality integration Backend or Frontend
+```
