@@ -32,3 +32,9 @@
 ```
 ✅ Create Notes Application Add CRUD functionality integration Backend or Frontend
 ```
+
+# 👩🏻‍💼 Day-06
+
+```
+✅ Multer DiskStoare MemoryStorage
+```
