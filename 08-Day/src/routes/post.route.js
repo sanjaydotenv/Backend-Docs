@@ -10,4 +10,6 @@ route.post(
   postController.createPostcontroller,
 );
 
+route.get("/getAll-Posts", postController.getAllPostsController);
+
 module.exports = route;
