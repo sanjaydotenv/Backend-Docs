@@ -56,3 +56,9 @@
 ```
 ✅ Touch Authentication like what is (jwt) JsonWebToken
 ```
+
+# 👩🏻‍💼 Day-10
+
+```
+✅ Authentication jwt, password hashing(brcyptjs)
+```
