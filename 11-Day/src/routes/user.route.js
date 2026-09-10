@@ -7,4 +7,8 @@ route.post("/register", userController.registerController);
 
 route.get("/me" , userController.getMeController)
 
+route.post("/login" , userController.loginController)
+
+route.post("/access-token" , userController.getAccessTokenViaRefreshToken)
+
 export default route;

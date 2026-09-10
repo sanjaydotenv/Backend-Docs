@@ -52,14 +52,20 @@ export const registerController = async (req, res) => {
 export const getMeController = async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
 
-
   if (!token) {
     return res.status(404).json({
       message: "Unauthorized bad request",
     });
   }
 
-  const decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET);
+  let decoded;
+  try {
+    decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET);
+  } catch (error) {
+    res.status(401).json({
+      message: "Unauthorized token invalid or expire",
+    });
+  }
 
   const user = await userModel.findById(decoded.id);
 
@@ -74,7 +80,57 @@ export const getMeController = async (req, res) => {
   });
 };
 
+export const loginController = async (req, res) => {
+  const { email, password } = req.body;
+
+  const isUserExists = await userModel.findOne({ email });
+
+  if (!isUserExists) {
+    res.status(404).json({
+      message: "something went wrong",
+    });
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, isUserExists.password);
+
+  if (!isPasswordValid) {
+    res.status(404).json({
+      message: "something went wrong",
+    });
+  }
+
+  const { accessToken, refreshToken } = generateAccessRefreshToken(
+    isUserExists._id,
+  );
+
+  isUserExists.refreshToken = refreshToken;
+  await isUserExists.save();
+
+  res.cookie("refresh-token", refreshToken, {
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    message: "User loginn suucessfully",
+    data: {
+      user: {
+        name: isUserExists.name,
+        email: isUserExists.email,
+      },
+      token: accessToken,
+    },
+  });
+};
+
+export const getAccessTokenViaRefreshToken = (req, res) => {
+  const cookie = req.cookie;
+
+  console.log(cookie);
+};
+
 export default {
   registerController,
   getMeController,
+  loginController,
+  getAccessTokenViaRefreshToken,
 };
