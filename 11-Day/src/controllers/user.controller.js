@@ -106,7 +106,7 @@ export const loginController = async (req, res) => {
   isUserExists.refreshToken = refreshToken;
   await isUserExists.save();
 
-  res.cookie("refresh-token", refreshToken, {
+  res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
   });
 
@@ -122,10 +122,41 @@ export const loginController = async (req, res) => {
   });
 };
 
-export const getAccessTokenViaRefreshToken = (req, res) => {
-  const cookie = req.cookie;
+export const getAccessTokenViaRefreshToken = async (req, res) => {
+  const { refreshToken } = req.cookies;
 
-  console.log(cookie);
+  if (!refreshToken) {
+    res.status(400).json({
+      message: "refreshToken not found",
+    });
+  }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(refreshToken, config.REFRESH_TOKEN_SECRET);
+  } catch (error) {
+    res.status(401).json({
+      message: "Unauthorized token invalid or expire",
+    });
+  }
+
+  const user = await userModel.findById(decoded.id);
+
+  const { accessToken, newRefreshToken } = generateAccessRefreshToken(user._id);
+
+  user.refreshToken = newRefreshToken;
+  await user.save();
+
+  res.cookie("refreshToken", newRefreshToken, {
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    message: "generate new access Token",
+    data: {
+      token: accessToken,
+    },
+  });
 };
 
 export default {
