@@ -5,4 +5,6 @@ const route = express.Router();
 
 route.post("/register", userController.registerController);
 
+route.get("/me" , userController.getMeController)
+
 export default route;
