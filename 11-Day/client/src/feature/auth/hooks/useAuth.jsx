@@ -3,13 +3,15 @@ import { AuthContext } from "../../../context/authContext";
 import axiosInsatnce from "../api/axiosInstance";
 
 export const useAuth = () => {
-  const { formData, setFormData } = useContext(AuthContext);
+  const { formData, setFormData , setAccessToken } = useContext(AuthContext);
 
   const handleSumbit = async (e) => {
     e.preventDefault();
 
     const res = await axiosInsatnce.post("/register", formData);
-    console.log(res);
+
+    setAccessToken(res.data.data.accessToken)
+
   };
 
   const handleChange = (data) => {
