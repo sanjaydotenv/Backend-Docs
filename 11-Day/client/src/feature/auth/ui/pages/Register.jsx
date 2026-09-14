@@ -3,7 +3,7 @@ import { NavLink } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
 
 const Register = () => {
-  const { handleChange, handleSumbit } = useAuth();
+  const { handleChange, handleSubmit } = useAuth();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
@@ -12,7 +12,7 @@ const Register = () => {
 
         <p className="mb-8 text-sm text-slate-400">Register your account</p>
 
-        <form onSubmit={handleSumbit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-300">
               Name

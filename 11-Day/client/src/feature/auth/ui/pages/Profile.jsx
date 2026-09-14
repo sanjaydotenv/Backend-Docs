@@ -18,21 +18,21 @@ const Profile = () => {
 
         {/* Profile Info */}
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800">{userData.user.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-800">{userData?.user?.name}</h1>
 
-          <p className="text-gray-500 mt-1">{userData.user.email}</p>
+          <p className="text-gray-500 mt-1">{userData?.user?.email}</p>
         </div>
 
         {/* Details */}
         <div className="mt-7 border-t border-gray-200 pt-5">
           <div className="flex justify-between items-center py-3">
             <span className="text-sm text-gray-500">Name</span>
-            <span className="font-medium text-gray-800">{userData.user.name}</span>
+            <span className="font-medium text-gray-800">{userData?.user?.name}</span>
           </div>
 
           <div className="flex justify-between items-center py-3">
             <span className="text-sm text-gray-500">Email</span>
-            <span className="font-medium text-gray-800">{userData.user.email}</span>
+            <span className="font-medium text-gray-800">{userData?.user?.email}</span>
           </div>
         </div>
       </div>

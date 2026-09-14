@@ -52,6 +52,7 @@ export const registerController = async (req, res) => {
 export const getMeController = async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
 
+
   if (!token) {
     return res.status(404).json({
       message: "Unauthorized bad request",
@@ -125,8 +126,9 @@ export const loginController = async (req, res) => {
 export const getAccessTokenViaRefreshToken = async (req, res) => {
   const { refreshToken } = req.cookies;
 
+
   if (!refreshToken) {
-    res.status(400).json({
+    res.status(401).json({
       message: "refreshToken not found",
     });
   }
@@ -142,7 +144,8 @@ export const getAccessTokenViaRefreshToken = async (req, res) => {
 
   const user = await userModel.findById(decoded.id);
 
-  const { accessToken, newRefreshToken } = generateAccessRefreshToken(user._id);
+  const { accessToken, refreshToken: newRefreshToken } =
+    generateAccessRefreshToken(user._id);
 
   user.refreshToken = newRefreshToken;
   await user.save();
@@ -154,7 +157,7 @@ export const getAccessTokenViaRefreshToken = async (req, res) => {
   res.status(200).json({
     message: "generate new access Token",
     data: {
-      token: accessToken,
+      accessTokenn: accessToken,
     },
   });
 };

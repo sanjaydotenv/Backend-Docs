@@ -1,8 +1,10 @@
 import React, { useContext } from "react";
 import { NavLink } from "react-router";
 import { AuthContext } from "../../../../context/authContext";
+import { useAuth } from "../../hooks/useAuth";
 
 const Login = () => {
+  const { handleSubmitLogin, handleChangeLogin } = useAuth();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
@@ -11,13 +13,15 @@ const Login = () => {
 
         <p className="mb-8 text-sm text-slate-400">Login to your account</p>
 
-        <form className="space-y-5">
+        <form onSubmit={handleSubmitLogin} className="space-y-5">
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-300">
               Email
             </label>
 
             <input
+              onChange={handleChangeLogin}
+              name="email"
               type="email"
               placeholder="Enter your email"
               className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-blue-500"
@@ -30,6 +34,8 @@ const Login = () => {
             </label>
 
             <input
+              onChange={handleChangeLogin}
+              name="password"
               type="password"
               placeholder="Enter your password"
               className="w-full rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-white outline-none placeholder:text-slate-500 focus:border-blue-500"

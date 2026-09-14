@@ -7,12 +7,5 @@ const axiosInsatnce = new axios.create({
   withCredentials: true,
 });
 
-// axiosInsatnce.interceptors.request.use((config) => {
-//   const { accessToken } = useContext(AuthContext);
-
-//   console.log(accessToken)
-
-//   config.headers.Authorization = `Bearer ${accessToken}`;
-// });
 
 export default axiosInsatnce;
