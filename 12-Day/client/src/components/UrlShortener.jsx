@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Copy,
   Trash2,
@@ -6,38 +6,21 @@ import {
   Link2,
   MousePointerClick,
 } from "lucide-react";
+import axios from "axios";
 
 const UrlShortener = () => {
-  const urls = [
-    {
-      id: 1,
-      originalUrl: "https://github.com/sanjaydotenv",
-      shortUrl: "short.ly/a8K2x",
-      clicks: 124,
-      createdAt: "Today, 10:30 AM",
-    },
-    {
-      id: 2,
-      originalUrl: "https://www.youtube.com/watch?v=example123",
-      shortUrl: "short.ly/kP91m",
-      clicks: 87,
-      createdAt: "Yesterday",
-    },
-    {
-      id: 3,
-      originalUrl: "https://react.dev/learn",
-      shortUrl: "short.ly/x7Q2p",
-      clicks: 42,
-      createdAt: "Sep 14, 2026",
-    },
-    {
-      id: 4,
-      originalUrl: "https://tailwindcss.com/docs/installation",
-      shortUrl: "short.ly/mN45z",
-      clicks: 19,
-      createdAt: "Sep 13, 2026",
-    },
-  ];
+  const [urls, setUrls] = useState([]);
+
+  const getAllLinks = async () => {
+    const res = await axios.get("/api/url/");
+
+    setUrls(res.data.data.urls);
+  };
+  console.log(urls)
+
+  useEffect(() => {
+    getAllLinks();
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -153,7 +136,7 @@ const UrlShortener = () => {
           <div>
             {urls.map((url) => (
               <div
-                key={url.id}
+                key={url._id}
                 className="border-b border-white/5 px-5 py-5 transition hover:bg-white/[0.025]"
               >
                 <div className="grid gap-4 md:grid-cols-[1.5fr_1fr_100px_140px] md:items-center md:gap-5">
@@ -200,7 +183,7 @@ const UrlShortener = () => {
                     <div className="flex items-center gap-2 text-sm">
                       <MousePointerClick size={15} className="text-slate-500" />
 
-                      <span className="font-semibold">{url.clicks}</span>
+                      <span className="font-semibold">{url.countClicks}</span>
                     </div>
                   </div>
 
