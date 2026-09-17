@@ -10,20 +10,48 @@ import axios from "axios";
 
 const UrlShortener = () => {
   const [urls, setUrls] = useState([]);
+  const [showToast, setShowToast] = useState(false);
 
   const getAllLinks = async () => {
-    const res = await axios.get("/api/url/");
+    try {
+      const res = await axios.get("/api/url/");
 
-    setUrls(res.data.data.urls);
+      setUrls(res.data.data.urls);
+    } catch (error) {
+      console.error("Failed to fetch URLs:", error);
+    }
   };
-  console.log(urls)
 
   useEffect(() => {
     getAllLinks();
   }, []);
 
+  // Copy short URL
+  const handleCopy = async (shortCode) => {
+    try {
+      const shortUrl = `${window.location.origin}/api/${shortCode}`;
+
+      await navigator.clipboard.writeText(shortUrl);
+
+      setShowToast(true);
+
+      setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
+    } catch (error) {
+      console.error("Copy failed:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
+      {/* Toast */}
+      {showToast && (
+        <div className="fixed right-5 top-5 z-50 rounded-xl border border-green-500/20 bg-slate-900 px-4 py-3 text-sm text-green-400 shadow-xl">
+          ✓ Link copied successfully
+        </div>
+      )}
+
       {/* Navbar */}
       <nav className="border-b border-white/10 bg-slate-950/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
@@ -77,6 +105,7 @@ const UrlShortener = () => {
 
         {/* Stats */}
         <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {/* Total URLs */}
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400">
               <Link2 size={20} />
@@ -84,9 +113,10 @@ const UrlShortener = () => {
 
             <p className="text-sm text-slate-400">Total URLs</p>
 
-            <h3 className="mt-1 text-2xl font-bold">24</h3>
+            <h3 className="mt-1 text-2xl font-bold">{urls.length}</h3>
           </div>
 
+          {/* Total Clicks */}
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-green-500/10 text-green-400">
               <MousePointerClick size={20} />
@@ -94,9 +124,12 @@ const UrlShortener = () => {
 
             <p className="text-sm text-slate-400">Total Clicks</p>
 
-            <h3 className="mt-1 text-2xl font-bold">2,481</h3>
+            <h3 className="mt-1 text-2xl font-bold">
+              {urls.reduce((total, url) => total + url.countClicks, 0)}
+            </h3>
           </div>
 
+          {/* This Month */}
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400">
               <ExternalLink size={20} />
@@ -104,7 +137,7 @@ const UrlShortener = () => {
 
             <p className="text-sm text-slate-400">This Month</p>
 
-            <h3 className="mt-1 text-2xl font-bold">8 URLs</h3>
+            <h3 className="mt-1 text-2xl font-bold">{urls.length} URLs</h3>
           </div>
         </div>
 
@@ -114,13 +147,14 @@ const UrlShortener = () => {
           <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
             <div>
               <h3 className="font-semibold">All URLs</h3>
+
               <p className="mt-1 text-xs text-slate-500">
                 Manage your shortened links
               </p>
             </div>
 
             <span className="rounded-lg bg-white/5 px-3 py-1.5 text-xs text-slate-400">
-              24 links
+              {urls.length} links
             </span>
           </div>
 
@@ -140,24 +174,27 @@ const UrlShortener = () => {
                 className="border-b border-white/5 px-5 py-5 transition hover:bg-white/[0.025]"
               >
                 <div className="grid gap-4 md:grid-cols-[1.5fr_1fr_100px_140px] md:items-center md:gap-5">
-                  {/* Original */}
+                  {/* Original URL */}
                   <div className="min-w-0">
                     <p className="mb-1 text-xs text-slate-500 md:hidden">
                       Original URL
                     </p>
 
-                    <div className="flex items-center gap-2">
+                    <a
+                      href={`/api/${url.shortCode}`}
+                      className="flex w-80 items-center gap-2"
+                    >
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-slate-400">
                         <ExternalLink size={16} />
                       </div>
 
-                      <p className="truncate text-sm text-slate-300">
-                        {url.originalUrl}
+                      <p className="truncate text-sm text-slate-300 hover:text-blue-400">
+                        {`${window.location.origin}/api/${url.shortCode}`}
                       </p>
-                    </div>
+                    </a>
 
                     <p className="mt-2 text-xs text-slate-600">
-                      Created {url.createdAt}
+                      Created {new Date(url.createdAt).toLocaleString()}
                     </p>
                   </div>
 
@@ -169,7 +206,7 @@ const UrlShortener = () => {
 
                     <div className="flex items-center gap-2">
                       <span className="truncate rounded-lg bg-blue-500/10 px-3 py-2 text-sm font-medium text-blue-400">
-                        {url.shortUrl}
+                        {url.shortCode}
                       </span>
                     </div>
                   </div>
@@ -194,13 +231,16 @@ const UrlShortener = () => {
                     </p>
 
                     <div className="flex justify-start gap-2 md:justify-end">
+                      {/* Copy */}
                       <button
                         title="Copy URL"
+                        onClick={() => handleCopy(url.shortCode)}
                         className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition hover:border-blue-500/30 hover:bg-blue-500/10 hover:text-blue-400"
                       >
                         <Copy size={16} />
                       </button>
 
+                      {/* Delete */}
                       <button
                         title="Delete URL"
                         className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-400"
@@ -214,9 +254,11 @@ const UrlShortener = () => {
             ))}
           </div>
 
-          {/* Empty footer */}
+          {/* Footer */}
           <div className="flex items-center justify-between px-5 py-4 text-xs text-slate-500">
-            <span>Showing 4 of 24 URLs</span>
+            <span>
+              Showing {urls.length} of {urls.length} URLs
+            </span>
 
             <div className="flex gap-2">
               <button className="rounded-lg border border-white/10 px-3 py-1.5 transition hover:bg-white/5">

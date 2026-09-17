@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 app.use("/api/url", urlRoute);
 
-app.get("/:code", async (req, res) => {
+app.get("/api/:code", async (req, res) => {
   const { code } = req.params;
 
   const url = await urlModel.findOne({
