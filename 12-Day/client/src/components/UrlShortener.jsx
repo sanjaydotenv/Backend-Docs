@@ -11,6 +11,7 @@ import axios from "axios";
 const UrlShortener = () => {
   const [urls, setUrls] = useState([]);
   const [showToast, setShowToast] = useState(false);
+  const [inputData, setInputData] = useState(null);
 
   const getAllLinks = async () => {
     try {
@@ -42,6 +43,18 @@ const UrlShortener = () => {
       console.error("Copy failed:", error);
     }
   };
+
+  const handleChange = (data) => {
+    setInputData({ [data.target.name]: data.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const res = await axios.post("/api/url" , inputData)
+
+    console.log(res)
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -91,13 +104,15 @@ const UrlShortener = () => {
               <Link2 size={18} className="mr-3 text-slate-500" />
 
               <input
+                onChange={handleChange}
+                name="url"
                 type="text"
                 placeholder="Paste your long URL here..."
                 className="w-full bg-transparent py-3 text-sm text-white outline-none placeholder:text-slate-600"
               />
             </div>
 
-            <button className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold transition hover:bg-blue-500 active:scale-[0.98]">
+            <button onClick={handleSubmit} className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold transition hover:bg-blue-500 active:scale-[0.98]">
               Shorten URL
             </button>
           </div>
