@@ -12,6 +12,7 @@ const UrlShortener = () => {
   const [urls, setUrls] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [inputData, setInputData] = useState(null);
+  const [inputVal, setinputVal] = useState("");
 
   const getAllLinks = async () => {
     try {
@@ -46,15 +47,23 @@ const UrlShortener = () => {
 
   const handleChange = (data) => {
     setInputData({ [data.target.name]: data.target.value });
+    setinputVal(data.target.value);
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const res = await axios.post("/api/url" , inputData)
+    await axios.post("/api/url", inputData);
 
-    console.log(res)
-  }
+    setinputVal("");
+    getAllLinks();
+  };
+
+  const handleDelete = async (code) => {
+    await axios.delete(`/api/url/${code}`);
+
+    getAllLinks();
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -105,6 +114,7 @@ const UrlShortener = () => {
 
               <input
                 onChange={handleChange}
+                value={inputVal}
                 name="url"
                 type="text"
                 placeholder="Paste your long URL here..."
@@ -112,7 +122,10 @@ const UrlShortener = () => {
               />
             </div>
 
-            <button onClick={handleSubmit} className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold transition hover:bg-blue-500 active:scale-[0.98]">
+            <button
+              onClick={handleSubmit}
+              className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold transition hover:bg-blue-500 active:scale-[0.98]"
+            >
               Shorten URL
             </button>
           </div>
@@ -257,6 +270,7 @@ const UrlShortener = () => {
 
                       {/* Delete */}
                       <button
+                        onClick={() => handleDelete(url.shortCode)}
                         title="Delete URL"
                         className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-400"
                       >
