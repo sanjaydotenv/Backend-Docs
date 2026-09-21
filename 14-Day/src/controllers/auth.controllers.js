@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import {
   createAccessToken,
   createRefreshToken,
-  redRefreshToken,
+  readRefreshToken,
 } from "../utils/auth.utils.js";
 
 const userRegisterController = async (req, res) => {
@@ -111,10 +111,10 @@ const userLoginController = async (req, res) => {
   });
 };
 
-const getNewAccessToken = async (req, res) => {
+const getNewAccessTokenController = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
 
-  const decoded = redRefreshToken(refreshToken);
+  const decoded = readRefreshToken(refreshToken);
 
   if (!decoded) {
     return res.status(400).json({
@@ -160,8 +160,25 @@ const getNewAccessToken = async (req, res) => {
   });
 };
 
+const getMeController = async (req, res) => {
+  const user = req.userProfile;
+
+  res.status(200).json({
+    message: "user fetched successfully",
+    data: {
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    },
+  });
+};
+
 export default {
   userRegisterController,
   userLoginController,
-  getNewAccessToken,
+  getNewAccessTokenController,
+  getMeController,
 };

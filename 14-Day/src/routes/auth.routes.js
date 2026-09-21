@@ -4,6 +4,7 @@ import {
   loginValidator,
   registerValidator,
 } from "../validator/auth.validator.js";
+import { authenticate } from "../middlewares/auth.middleware.js";
 
 const route = Router();
 
@@ -30,6 +31,13 @@ route.post("/login", loginValidator, authcontrollers.userLoginController);
  * @cookies const refreshToken = req.cookies.refreshToken
  */
 
-route.post("/refresh-token", authcontrollers.getNewAccessToken);
+route.post("/refresh-token", authcontrollers.getNewAccessTokenController);
+
+/**
+ * @POST "http://localhost:3000/api/auth/getme"
+ */
+
+route.get("/getme" , authenticate , authcontrollers.getMeController)
+
 
 export default route;
