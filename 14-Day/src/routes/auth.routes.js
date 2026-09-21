@@ -1,6 +1,9 @@
 import { Router } from "express";
 import authcontrollers from "../controllers/auth.controllers.js";
-import { loginValidator, registerValidator } from "../validator/auth.validator.js";
+import {
+  loginValidator,
+  registerValidator,
+} from "../validator/auth.validator.js";
 
 const route = Router();
 
@@ -16,10 +19,17 @@ route.post(
 );
 
 /**
- * @POST "hhtp://localhost:3000/api/auth/login"
+ * @POST "http://localhost:3000/api/auth/login"
  * @body const {email , password } = req.body
  */
 
-route.post("/login", loginValidator ,authcontrollers.userLoginController)
+route.post("/login", loginValidator, authcontrollers.userLoginController);
+
+/**
+ * @POST "http://localhost:3000/api/auth/refresh-token"
+ * @cookies const refreshToken = req.cookies.refreshToken
+ */
+
+route.post("/refresh-token", authcontrollers.getNewAccessToken);
 
 export default route;

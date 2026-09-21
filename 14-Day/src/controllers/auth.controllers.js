@@ -1,6 +1,10 @@
 import userModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import { createAccessToken, createRefreshToken } from "../utils/auth.utils.js";
+import {
+  createAccessToken,
+  createRefreshToken,
+  redRefreshToken,
+} from "../utils/auth.utils.js";
 
 const userRegisterController = async (req, res) => {
   const { name, email, password } = req.body;
@@ -82,7 +86,7 @@ const userLoginController = async (req, res) => {
     role: isExists.role,
   });
 
-  const refreshToken = createAccessToken({
+  const refreshToken = createRefreshToken({
     userID: isExists._id,
     role: isExists.role,
   });
@@ -107,7 +111,57 @@ const userLoginController = async (req, res) => {
   });
 };
 
+const getNewAccessToken = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  const decoded = redRefreshToken(refreshToken);
+
+  if (!decoded) {
+    return res.status(400).json({
+      message: "invalid refresh Token",
+    });
+  }
+
+  const user = await userModel.findById(decoded.userID);
+
+  if (user.refreshToken !== refreshToken) {
+    userModel.findByIdAndUpdate(user._id, {
+      refreshToken: null,
+    });
+  }
+
+  const accessToken = createAccessToken({
+    userId: user._id,
+    role: user.role,
+  });
+
+  const newRefreshToken = createRefreshToken({
+    userId: user._id,
+    role: user.role,
+  });
+
+  await userModel.findByIdAndUpdate(user._id, {
+    refreshToken: newRefreshToken,
+  });
+
+  res.cookie("refreshToken", newRefreshToken);
+
+  res.status(201).json({
+    message: "Create new Access Token",
+    data: {
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      accessToken,
+    },
+  });
+};
+
 export default {
   userRegisterController,
   userLoginController,
+  getNewAccessToken,
 };
