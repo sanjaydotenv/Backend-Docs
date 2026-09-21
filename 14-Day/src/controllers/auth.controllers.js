@@ -35,8 +35,79 @@ const userRegisterController = async (req, res) => {
     userID: user._id,
     role: user.role,
   });
+
+  await userModel.findOneAndUpdate(user._id, {
+    refreshToken,
+  });
+
+  res.cookie("refreshToken", refreshToken);
+
+  res.status(201).json({
+    message: "User register Successfully",
+    data: {
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      accessToken,
+    },
+  });
+};
+
+const userLoginController = async (req, res) => {
+  const { email, password } = req.body;
+
+  const isExists = await userModel.findOne({
+    email,
+  });
+
+  if (!isExists) {
+    return res.status(401).json({
+      message: "invalid email or password",
+    });
+  }
+
+  const isValidPassword = await bcrypt.compare(password, isExists.password);
+
+  if (!isValidPassword) {
+    return res.status(400).json({
+      message: "invalid email or password",
+    });
+  }
+
+  const accessToken = createAccessToken({
+    userID: isExists._id,
+    role: isExists.role,
+  });
+
+  const refreshToken = createAccessToken({
+    userID: isExists._id,
+    role: isExists.role,
+  });
+
+  await userModel.findByIdAndUpdate(isExists._id, {
+    refreshToken,
+  });
+
+  res.cookie("refreshToken", refreshToken);
+
+  res.status(200).json({
+    message: "User login suucessfully",
+    data: {
+      user: {
+        id: isExists._id,
+        name: isExists.name,
+        email: isExists.email,
+        role: isExists.role,
+      },
+      accessToken,
+    },
+  });
 };
 
 export default {
   userRegisterController,
+  userLoginController,
 };
