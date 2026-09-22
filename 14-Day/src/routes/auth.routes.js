@@ -37,7 +37,6 @@ route.post("/refresh-token", authcontrollers.getNewAccessTokenController);
  * @POST "http://localhost:3000/api/auth/getme"
  */
 
-route.get("/getme" , authenticate , authcontrollers.getMeController)
-
+route.get("/getme", authenticate, authcontrollers.getMeController);
 
 export default route;
