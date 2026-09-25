@@ -1,10 +1,10 @@
 const createProduct = (req, res) => {
-  console.log(req.body);
-  console.log(req.files);
+  const { title, description, price, sizes } = req.body;
 
-  res.status(201).json({
-    message: "DONE",
-  });
+  const file = req.files;
+
+  
+
 };
 
 export default {
