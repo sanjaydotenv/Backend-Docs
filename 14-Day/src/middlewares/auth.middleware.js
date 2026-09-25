@@ -6,8 +6,6 @@ export const authenticate = async (req, res, next) => {
 
   const decoded = readAccessToken(accessToken);
 
-  console.log(decoded)
-
   if (!decoded) {
     return res.status(400).json({
       message: "invalid access token",
