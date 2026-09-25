@@ -50,7 +50,7 @@ const productSchema = mongoose.Schema({
     },
   ],
   seller: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Users",
     required: true,
   },

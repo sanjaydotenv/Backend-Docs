@@ -8,6 +8,10 @@ const route = Router();
 
 const upload = multer({
   storage: memoryStorage(),
+  limits:{
+    files: 5,
+    fileSize: 1 * 1024 * 1024
+  }
 });
 
 /**

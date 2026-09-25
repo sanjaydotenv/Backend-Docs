@@ -11,6 +11,7 @@ const uploadFile = async (buffer, fileName) => {
   const response = await ImageKit.upload({
     file: buffer,
     fileName,
+    folder: "Snitch",
   });
 
   return response;
