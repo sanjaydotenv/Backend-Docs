@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { authenticate } from "../middlewares/auth.middleware";
-import { cartValidator } from "../validator/cart.validator";
+import { authenticate } from "../middlewares/auth.middleware.js";
+import { cartValidator } from "../validator/cart.validator.js";
 import cartControllers from "../controllers/cart.controllers.js";
 
 const route = Router();

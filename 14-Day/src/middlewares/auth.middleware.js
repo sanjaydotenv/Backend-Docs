@@ -18,3 +18,12 @@ export const authenticate = async (req, res, next) => {
 
   next();
 };
+
+export const authenticateSeller = (req, res, next) => {
+  if (req.userProfile.role !== "seller") {
+    return res.status(403).json({
+      message: "user is not authorize to create product",
+    });
+  }
+  next();
+};
