@@ -33,7 +33,48 @@ const addToCart = async (req, res) => {
   const productInCart = cart.products.find(
     (p) => p.product.toString() === productId && p.size === size,
   );
-  
+
+  if (productInCart) {
+    if (productInCart.quantity + quantity > selectedSize.stock) {
+      return res.status(400).json({
+        message: "Insufficient stock",
+      });
+    }
+
+    await cartModel.updateOne(
+      {
+        user: req.user.userId,
+        "products.product": productId,
+        "products.size": size,
+      },
+      {
+        $inc: {
+          "products.$.quantity": quantity,
+        },
+      },
+    );
+
+    return res.status(200).json({
+      message: "Product quantity updated in cart",
+    });
+  }
+
+  await cartModel.findOneAndUpdate(
+    { user: req.user.userId },
+    {
+      $push: {
+        products: {
+          product: productId,
+          quantity: quantity,
+          size: size,
+        },
+      },
+    },
+  );
+
+  return res.status(200).json({
+    message: "Product added to cart",
+  });
 };
 
 export default { addToCart };
