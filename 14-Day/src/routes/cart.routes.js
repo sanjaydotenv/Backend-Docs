@@ -14,4 +14,12 @@ const route = Router();
 
 route.post("/", authenticate, cartValidator, cartControllers.addToCart);
 
+/**
+ * @method GET
+ * @route /api/cart
+ * @access protected
+ * @description Get the user's cart
+ */
+route.get("/", authenticate, cartControllers.getAllCarts);
+
 export default route;
