@@ -37,4 +37,41 @@ router.post("/:productId/order", async (req, res) => {
   return res.status(201).json({ ...payment, keyId: razorpayInstance.key_id });
 });
 
+router.post("/verify", async (req, res) => {
+  const { orderId, paymentId, signature } = req.body;
+
+  const payment = await paymentModel.findOne({
+    orderId: orderId,
+    status: "pending",
+  });
+
+  if (!payment) {
+    return res
+      .status(404)
+      .json({ message: "Payment not found or already verified" });
+  }
+
+  const isValid = validatePaymentVerification(
+    {
+      order_id: orderId,
+      payment_id: paymentId,
+    },
+    signature,
+    config.RAZORPAY_KEY_SECRET,
+  );
+
+  if (!isValid) {
+    return res.status(400).json({ message: "Invalid payment verification" });
+  }
+
+  await paymentModel.updateOne(
+    { orderId: orderId },
+    {
+      $set: { status: "completed", paymentId: paymentId, signature: signature },
+    },
+  );
+
+  return res.status(200).json({ message: "Payment verified successfully" });
+});
+
 module.exports = router;
