@@ -6,8 +6,10 @@ export default function initializeSocket(httpServer) {
   io.on("connection", (socket) => {
     console.log("Connected");
 
-    io.on("u1" , () => {
-        console.log("User One Listening")
+    socket.on("u1" , (data) => {
+      console.log(data)
+
+      socket.emit("i am listening")
     })
 
 
